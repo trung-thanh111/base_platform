@@ -3,11 +3,11 @@
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                 <span class="label label-success pull-right">Tháng</span>
-                <h5>Đơn hàng trong tháng</h5>
+                <h5>Liên hệ trong tháng</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">{{ $orderStatistic['orderCurrentMonth'] }}</h1>
-                {!! growHtml($orderStatistic['grow']) !!}
+                <h1 class="no-margins">{{ $stats['currentMonthVR'] }}</h1>
+                <div class="stat-percent font-bold text-success">{{ $stats['growth'] }}% <i class="fa fa-level-up"></i></div>
                 <small>Tăng trưởng so với tháng trước</small>
             </div>
         </div>
@@ -15,13 +15,12 @@
     <div class="col-lg-3">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <span class="label label-info pull-right">Tổng số đơn hàng</span>
-                <h5>Orders</h5>
+                <span class="label label-info pull-right">Tổng số</span>
+                <h5>Nhân viên môi giới</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">{{ $orderStatistic['totalOrders'] }}</h1>
-                <div class="stat-percent font-bold text-info">{{ growth($orderStatistic['totalOrders'], $orderStatistic['cancleOrders']) }}% </div>
-                <small>Số đơn hủy {{ $orderStatistic['cancleOrders']  }} chiếm </small>
+                <h1 class="no-margins">{{ $stats['agentCount'] }}</h1>
+                <small>Nhân viên đang quản lý</small>
             </div>
         </div>
     </div>
@@ -29,23 +28,23 @@
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                 <span class="label label-primary pull-right">Total</span>
-                <h5>Tổng doanh thu</h5>
+                <h5>Bất động sản</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">{{ convert_price($orderStatistic['revenue'], true) }}đ</h1>
-                <small>Tổng doanh thu</small>
+                <h1 class="no-margins">{{ $stats['propertyCount'] }}</h1>
+                <small>Tổng số BĐS trên hệ thống</small>
             </div>
         </div>
     </div>
     <div class="col-lg-3">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <span class="label label-danger pull-right">Customer</span>
-                <h5>Tổng số khách hàng</h5>
+                <span class="label label-danger pull-right">Activity</span>
+                <h5>Dự án & Mặt bằng</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">{{ $customerStatistic['totalCustomers'] }}</h1>
-                <small>Tổng số khách hàng</small>
+                <h1 class="no-margins">{{ $stats['floorplanCount'] }}</h1>
+                <small>Tổng số dự án mặt bằng</small>
             </div>
         </div>
     </div>

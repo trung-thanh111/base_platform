@@ -1,104 +1,65 @@
-<?php   
+<?php
 return [
     'module' => [
         [
             'title' => 'Dashboard',
-            'icon' => 'fa fa-database',
+            'icon' => 'fa fa-th-large',
             'name' => ['dashboard'],
             'route' => 'dashboard/index',
             'class' => 'special'
         ],
-        // [
-        //     'title' => 'Báo cáo doanh thu',
-        //     'icon' => 'fa fa-money',
-        //     'name' => ['report'],
-        //     'subModule' => [
-        //         [
-        //             'title' => 'Theo thời gian',
-        //             'route' => 'report/time'
-        //         ],
-        //         [
-        //             'title' => 'Theo sản phẩm',
-        //             'route' => 'report/product'
-        //         ],
-        //         [
-        //             'title' => 'Theo nguồn khách',
-        //             'route' => 'report/customer'
-        //         ],
-        //     ]
-        // ],
         [
-            'title' => 'QL Sản Phẩm',
-            'icon' => 'fa fa-cube',
-            'name' => ['product','attribute'],
+            'title' => 'Bất Động Sản',
+            'icon' => 'fa fa-home',
+            'name' => ['property', 'property_facility', 'floorplan', 'floorplan_room', 'location_highlight', 'visit_request', 'agent'],
             'subModule' => [
                 [
-                    'title' => 'QL Nhóm Sản Phẩm',
-                    'route' => 'product/catalogue/index'
+                    'title' => 'Bất Động Sản',
+                    'route' => 'property/index'
                 ],
                 [
-                    'title' => 'QL Sản phẩm',
-                    'route' => 'product/index'
+                    'title' => 'Tiện Ích BĐS',
+                    'route' => 'property_facility/index'
                 ],
                 [
-                    'title' => 'QL Loại thuộc tính',
-                    'route' => 'attribute/catalogue/index'
+                    'title' => 'Mặt Bằng',
+                    'route' => 'floorplan/index'
                 ],
                 [
-                    'title' => 'QL thuộc tính',
-                    'route' => 'attribute/index'
+                    'title' => 'Phòng Mặt Bằng',
+                    'route' => 'floorplan_room/index'
                 ],
-
+                [
+                    'title' => 'Tiện Ích Lân Cận',
+                    'route' => 'location_highlight/index'
+                ]
             ]
         ],
         [
-            'title' => 'QL đơn hàng',
-            'icon' => 'fa fa-shopping-bag',
-            'name' => ['order'],
+            'title' => 'Thư viện ảnh',
+            'icon' => 'fa fa-picture-o',
+            'name' => ['gallery'],
             'subModule' => [
                 [
-                    'title' => 'QL Đơn Hàng',
-                    'route' => 'order/index'
+                    'title' => 'Danh sách',
+                    'route' => 'gallery/index'
                 ],
             ]
         ],
         [
-            'title' => 'QL Nhóm Khách hàng',
-            'icon' => 'fa fa-user',
-            'name' => ['customer'],
+            'title' => 'Nhân viên môi giới',
+            'icon' => 'fa fa-users',
+            'name' => ['agent'],
             'subModule' => [
                 [
-                    'title' => 'QL Nhóm Khách hàng',
-                    'route' => asset('customer/catalogue/index')
-                ],
-                [
-                    'title' => 'QL Khách hàng',
-                    'route' => 'customer/index'
-                ],
-            ]
-        ],
-        [
-            'title' => 'QL Marketing',
-            'icon' => 'fa fa-money',
-            'name' => ['promotion', 'source'],
-            'subModule' => [
-                [
-                    'title' => 'QL Khuyến mại',
-                    'route' => 'promotion/index'
-                ],
-                [
-                    'title' => 'QL Voucher',
-                    'route' => 'voucher/index'
-                ],
-                [
-                    'title' => 'QL nguồn khách',
-                    'route' => 'source/index'
+                    'title' => 'Danh sách nhân viên',
+                    'route' => 'agent/index'
                 ],
             ]
         ],
         [
             'title' => 'QL Bài viết',
-            'icon' => 'fa fa-file',
+            'icon' => 'fa fa-edit',
             'name' => ['post'],
             'subModule' => [
                 [
@@ -112,55 +73,14 @@ return [
             ]
         ],
         [
-            'title' => 'QL Bình Luận',
-            'icon' => 'fa fa-comment',
-            'name' => ['reviews'],
-            'subModule' => [
-                [
-                    'title' => 'QL Bình Luận',
-                    'route' => 'review/index'
-                ]
-            ]
-        ],
-        [
             'title' => 'QL Liên Hệ',
-            'icon' => 'fa fa-github',
+            'icon' => 'fa fa-phone-square',
             'name' => ['contacts'],
             'subModule' => [
                 [
                     'title' => 'QL Liên Hệ',
-                    'route' => 'contact/index'
+                    'route' => 'visit_request/index'
                 ]
-            ]
-        ],
-        [
-            'title' => 'QL Nhóm Thành Viên',
-            'icon' => 'fa fa-user',
-            'name' => ['user','permission'],
-            'subModule' => [
-                [
-                    'title' => 'QL Nhóm Thành Viên',
-                    'route' => 'user/catalogue/index'
-                ],
-                [
-                    'title' => 'QL Thành Viên',
-                    'route' => 'user/index'
-                ],
-                [
-                    'title' => 'QL Quyền',
-                    'route' => 'permission/index'
-                ]
-            ]
-        ],
-        [
-            'title' => 'QL Banner & Slide',
-            'icon' => 'fa fa-picture-o',
-            'name' => ['slide'],
-            'subModule' => [
-                [
-                    'title' => 'Cài đặt Slide',
-                    'route' => 'slide/index'
-                ],
             ]
         ],
         [
@@ -176,7 +96,7 @@ return [
         ],
         [
             'title' => 'Cấu hình chung',
-            'icon' => 'fa fa-file',
+            'icon' => 'fa fa-cog',
             'name' => ['language', 'generate', 'system', 'widget'],
             'subModule' => [
                 [
@@ -187,11 +107,7 @@ return [
                     'title' => 'Cấu hình hệ thống',
                     'route' => 'system/index'
                 ],
-                [
-                    'title' => 'Quản lý Widget',
-                    'route' => 'widget/index'
-                ],
-                
+
             ]
         ]
     ],

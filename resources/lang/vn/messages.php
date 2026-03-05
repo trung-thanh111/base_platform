@@ -583,4 +583,10 @@ return [
     'enter_des_name' => 'Nhập vào tên chính sách',
     'admission_catalogue' =>  'Chọn loại tuyển sinh',
     'scholar' =>  'Chọn học bổng',
+    'sort' => [
+        'id-desc' => 'Mới nhất',
+        'id-asc' => 'Cũ nhất',
+        'name-asc' => 'Tên A-Z',
+        'name-desc' => 'Tên Z-A',
+    ],
 ];

@@ -4,7 +4,7 @@
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
             <form role="search" class="navbar-form-custom" action="search_results.html">
                 <div class="form-group">
-                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                    <input type="text" placeholder="Tìm kiếm ..." class="form-control" name="top-search" id="top-search">
                 </div>
             </form>
         </div>
@@ -18,7 +18,7 @@
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                    <i class="fa fa-envelope"></i>  <span class="label label-warning">16</span>
+                    <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
                 </a>
                 <ul class="dropdown-menu dropdown-messages">
                     <li>
@@ -71,7 +71,7 @@
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                    <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
                 </a>
                 <ul class="dropdown-menu dropdown-alerts">
                     <li>
@@ -114,13 +114,8 @@
 
 
             <li>
-                <a href="{{ route('auth.logout') }}">
-                    <i class="fa fa-sign-out"></i> Log out
-                </a>
-            </li>
-            <li>
-                <a class="right-sidebar-toggle">
-                    <i class="fa fa-tasks"></i>
+                <a href="{{ route('auth.logout') }}" class="uk-text-danger">
+                    <i class="fa fa-sign-out"></i> Đăng xuất
                 </a>
             </li>
         </ul>
