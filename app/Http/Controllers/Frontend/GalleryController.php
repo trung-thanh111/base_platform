@@ -3,77 +3,47 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
-use App\Models\Property;
-use App\Models\PropertyFacility;
 use App\Models\Floorplan;
 use App\Models\Gallery;
-use App\Models\LocationHighlight;
-use App\Models\Agent;
-use App\Models\Slide;
-use App\Models\VisitRequest;
-use App\Repositories\Core\SystemRepository;
+use App\Models\Property;
 use Illuminate\Http\Request;
 
-class HomeController extends FrontendController
+class GalleryController extends FrontendController
 {
-    protected $systemRepository;
-
-    public function __construct(
-        SystemRepository $systemRepository,
-    ) {
-        $this->systemRepository = $systemRepository;
+    public function __construct()
+    {
         parent::__construct();
     }
 
     /**
-     * Homepage — 9 sections
+     * Gallery page
      */
     public function index()
     {
-        $property = Property::where('publish', 2)->first();
-        $facilities = PropertyFacility::where('publish', 2)
-            ->orderBy('sort_order')
+        $galleries = Gallery::where('publish', 2)
+            ->orderBy('id', 'desc')
             ->get();
         $floorplans = Floorplan::with('rooms')
             ->where('publish', 2)
             ->orderBy('floor_number')
             ->get();
-        $galleries = Gallery::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $locationHighlights = LocationHighlight::where('publish', 2)
-            ->orderBy('sort_order')
-            ->get();
-        $primaryAgent = Agent::where('is_primary', true)
-            ->where('publish', 2)
-            ->first();
-        $agents = Agent::where('publish', 2)->get();
-        $slides = Slide::where('keyword', 'main-slider')
-            ->where('publish', 2)
-            ->first();
+        $property = Property::where('publish', 2)->first();
 
         $system = $this->system;
-        $seo = $this->buildSeo();
+        $seo = $this->buildSeo('Thư Viện Ảnh — Homely Vietnam');
         $schema = $this->schema($seo);
         $config = $this->config();
 
-        $template = 'frontend.homepage.home.index';
-        return view($template, compact(
+        return view('frontend.gallery.index', compact(
             'config',
             'seo',
             'system',
             'schema',
-            'property',
-            'facilities',
-            'floorplans',
             'galleries',
-            'locationHighlights',
-            'primaryAgent',
-            'agents',
-            'slides',
+            'floorplans',
+            'property'
         ));
     }
-
 
     // ------ Helpers ------
 

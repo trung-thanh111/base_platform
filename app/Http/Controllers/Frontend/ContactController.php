@@ -3,102 +3,72 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
+use App\Models\Property;
+use App\Models\Agent;
 use Illuminate\Http\Request;
-use Jenssegers\Agent\Facades\Agent;
-use Illuminate\Support\Facades\DB;
-use App\Models\Contact;
-use App\Services\V1\Core\SlideService;
-
-use App\Services\V1\Core\WidgetService;
 
 class ContactController extends FrontendController
 {
-    protected $language;
-    protected $system;
-    protected $widgetService;
-    protected $slideService;
-
-    public function __construct(
-        WidgetService $widgetService,
-        SlideService $slideService
-    ){
-        $this->widgetService = $widgetService;
-        $this->slideService = $slideService;
-        parent::__construct(); 
+    public function __construct()
+    {
+        parent::__construct();
     }
 
+    /**
+     * Contact page
+     */
+    public function index()
+    {
+        $property = Property::where('publish', 2)->first();
+        $agents = Agent::where('publish', 2)->get();
 
-    public function index(Request $request){
-        $widgets = $this->widgetService->getWidget([
-            ['keyword' => 'showroom-system','object' => true],
-            ['keyword' => 'news-outstanding','object' => true],
-        ], $this->language);
-        $config = $this->config();
         $system = $this->system;
-        $seo = [
-            'meta_title' => 'Liên Hệ',
-            'meta_description' => 'Liên Hệ '.$system['homepage_company'],
-            'meta_keyword' => '',
-            'meta_image' => '',
-            'canonical' => write_url('lien-he')
-        ];
-        $template = 'frontend.contact.index';
-        
-        $slides = $this->slideService->getSlide(
-            ['main-slide'],
-            $this->language
-        );
-        return view($template, compact(
-            'widgets',
+        $seo = $this->buildSeo('Liên Hệ — Homely Vietnam');
+        $schema = $this->schema($seo);
+        $config = $this->config();
+
+        return view('frontend.contact.index', compact(
             'config',
             'seo',
             'system',
-            'slides'
+            'schema',
+            'property',
+            'agents',
         ));
     }
 
-    public function save(Request $request){
-        try {
-            DB::beginTransaction();
-            $payload = $request->only(['email', 'name', 'phone', 'address', 'message']);
-            Contact::create($payload);
-            DB::commit();
-            return response()->json([
-                'message' => 'success',
-            ]);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-        
-    }
+    // ------ Helpers ------
 
-    public function saveContact(Request $request){
-        try {
-            DB::beginTransaction();
-            $payload = $request->only(['email', 'name', 'phone', 'address', 'message']);
-            Contact::create($payload);
-            DB::commit();
-            return redirect()->back()->with('success', 'Gửi đăng ký thành công. Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-        
-    }
-
-    private function config(){
+    private function buildSeo($title = null)
+    {
         return [
-            'language' => $this->language,
-            'css' => [
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
-            ],
-            'js' => [
-                'backend/library/location.js',
-                'frontend/core/library/cart.js',
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
-            ]
+            'meta_title' => $title ?? ($this->system['seo_meta_title'] ?? 'Homely Vietnam'),
+            'meta_keyword' => $this->system['seo_meta_keyword'] ?? '',
+            'meta_description' => $this->system['seo_meta_description'] ?? '',
+            'meta_image' => $this->system['seo_meta_images'] ?? '',
+            'canonical' => config('app.url'),
         ];
     }
 
+    public function schema(array $seo = []): string
+    {
+        return "<script type='application/ld+json'>
+            {
+                \"@context\": \"https://schema.org\",
+                \"@type\": \"WebSite\",
+                \"name\": \"" . ($seo['meta_title'] ?? '') . "\",
+                \"url\": \"" . ($seo['canonical'] ?? '') . "\",
+                \"description\": \"" . ($seo['meta_description'] ?? '') . "\"
+            }
+        </script>";
+    }
+
+    private function config()
+    {
+        return [
+            'language' => $this->language,
+            'css' => [],
+            'js' => []
+        ];
+    }
 }

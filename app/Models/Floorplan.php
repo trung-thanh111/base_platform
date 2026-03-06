@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\HasQuery;
 
 class Floorplan extends Model
@@ -39,5 +40,10 @@ class Floorplan extends Model
     public function properties(): BelongsTo
     {
         return $this->belongsTo(Property::class, 'property_id', 'id');
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(FloorplanRoom::class, 'floorplan_id', 'id')->orderBy('sort_order');
     }
 }

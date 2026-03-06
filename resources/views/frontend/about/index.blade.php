@@ -1,118 +1,45 @@
 @extends('frontend.homepage.layout')
+
 @section('content')
-    <script>
-        window.HomelyHeroSettings = <?php echo isset($slides) && isset($slides->setting) && is_array($slides->setting) ? json_encode($slides->setting) : 'null'; ?>;
-    </script>
     <div id="scroll-progress"></div>
 
     <div class="homely-page">
-
-        <section class="homely-hero">
-            <div class="homely-hero-content">
-                <div class="uk-container uk-container-center">
-                    <div class="uk-grid uk-grid-large">
-                        <div class="uk-width-large-7-10">
-                            <h1 class="homely-hero-title">
-                                {{ $property->tagline ?? 'Ngôi Nhà Hoàn Hảo Tiếp Theo Cho Cuộc Sống Của Bạn' }}
-                            </h1>
-                        </div>
-                        <div class="uk-width-large-3-10 uk-visible-large">
-                            @php $agent = $primaryAgent ?? $agents->first(); @endphp
-                            @if ($agent)
-                                <div class="homely-hero-agent">
-                                    @if ($agent->image)
-                                        <img src="{{ $agent->image }}" alt="{{ $agent->full_name }}">
-                                    @else
-                                        <div class="homely-avatar-fallback"><i class="fa fa-user"></i></div>
-                                    @endif
-                                    <div>
-                                        <h5>{{ $agent->full_name }}</h5>
-                                        <div class="uk-text-white">{{ $agent->phone }}</div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <div class="uk-container uk-container-center" style="margin-top:auto;">
-                    <div class="uk-grid uk-grid-medium uk-flex uk-flex-bottom">
-                        <div class="uk-width-large-1-2">
-                            <h5 class="homely-hero-address">
-                                {{ $property->address ?? '742 Evergreen Terrace Brooklyn, NY 11201' }}
-                            </h5>
-                        </div>
-                        <div class="uk-width-large-1-2">
-                            <div class="homely-hero-cta">
-                                <div class="uk-grid uk-grid-medium uk-flex uk-flex-middle">
-                                    <div class="uk-width-large-1-2">
-                                        <img src="{{ $property->image }}" alt="{{ $property->name ?? '' }}"
-                                            style="width:100%; border-radius:8px;">
-                                    </div>
-                                    <div class="uk-width-large-1-2">
-                                        <h5>Sống Với Ước Mơ</h5>
-                                        <p class="uk-text-muted">
-                                            {{ $property->description_short ?? 'Những ngôi nhà được thiết kế đẹp mắt, hiệu suất cao và phù hợp hoàn hảo với lối sống mỗi ngày.' }}
-                                        </p>
-                                        <a class="btn-homely" href="{{ url('/lien-he.html') }}">Đặt Lịch Tham Quan</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="homely-watermark">{{ $property->status ?? 'ĐANG BÁN' }}</div>
-
-            <div class="swiper homely-hero-swiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide"
-                        style="background-image: url('{{ $property->image ?? asset('frontend/resources/img/homely/slider/1.webp') }}')">
-                    </div>
-                    @if ($galleries->count() > 0)
-                        @foreach ($galleries as $gallery)
-                            @if (is_array($gallery->album))
-                                @foreach ($gallery->album as $img)
-                                    <div class="swiper-slide" style="background-image: url('{{ $img }}')"></div>
-                                @endforeach
-                            @endif
-                        @endforeach
-                    @else
-                        <div class="swiper-slide"
-                            style="background-image: url('{{ asset('frontend/resources/img/homely/slider/2.webp') }}')">
-                        </div>
-                    @endif
+        <section class="uk-section uk-flex uk-flex-middle uk-light hero-scroll-effect"
+            style="background: linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.2)), url('{{ asset('frontend/resources/img/homely/slider/1.webp') }}') no-repeat center center; background-size: 110%; min-height: 400px; padding-top: 100px;">
+            <div class="uk-container uk-container-center uk-width-1-1">
+                <div class="uk-flex uk-flex-middle uk-flex-space-between uk-flex-wrap"
+                    uk-scrollspy="cls: uk-animation-slide-bottom-small; delay: 100">
+                    <h1 class="uk-margin-remove title-breadcrumb">Giới Thiệu</h1>
+                    <ul class="uk-breadcrumb uk-margin-remove custom-breadcrumb">
+                        <li><a href="{{ route('home.index') }}">Trang Chủ</a></li>
+                        <li class="uk-active"><span>Giới thiệu</span></li>
+                    </ul>
                 </div>
             </div>
         </section>
 
-        <section class="about-property">
+        <section class="about-property bg-white">
             <div class="uk-container uk-container-center">
                 <div class="uk-grid uk-grid-large">
 
-                    <div class="uk-width-large-1-4" data-reveal="left">
-                        <div class="homely-section-label">Về Bất Động Sản</div>
-                    </div>
-
-                    <div class="uk-width-large-3-4">
-                        <div class="homely-about-desc" data-reveal="up">
+                    <div class="uk-width-large">
+                        <div class="uk-text-center uk-text-large uk-text-muted" data-reveal="up">
                             {!! $property->description ??
                                 'Ngôi nhà đặc biệt này mang đến không gian sống tinh tế với những không gian mở rộng rãi, nội thất sáng sủa và thiết kế hiện đại ấm áp. Mỗi căn phòng đều được tạo ra để mang lại bầu không khí chào đón, tạo nên khung cảnh hoàn hảo cho cuộc sống hàng ngày.' !!}
                         </div>
 
                         <div class="homely-spacer"></div>
                         <div class="uk-grid uk-grid-medium" data-reveal-group>
-                            <div class="uk-width-large-1-4 uk-width-medium-1-2" data-reveal="up">
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
                                 <div class="homely-stat">
                                     <img src="{{ asset('frontend/resources/img/homely/svg/size.svg') }}" alt="Diện tích">
-                                    <div class="homely-stat-value" data-counter="{{ $property->area ?? '1665' }}"
+                                    <div class="homely-stat-value" data-counter="{{ $property->area_sqm ?? '1665' }}"
                                         data-suffix=" m²">
-                                        {{ $property->area ?? '1665' }} m²
+                                        {{ $property->area_sqm ?? '1665' }} m²
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-large-1-4 uk-width-medium-1-2" data-reveal="up">
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
                                 <div class="homely-stat">
                                     <img src="{{ asset('frontend/resources/img/homely/svg/bed.svg') }}" alt="Phòng ngủ">
                                     <div class="homely-stat-value" data-counter="{{ $property->bedrooms ?? '5' }}"
@@ -121,7 +48,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-large-1-4 uk-width-medium-1-2" data-reveal="up">
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
                                 <div class="homely-stat">
                                     <img src="{{ asset('frontend/resources/img/homely/svg/bath.svg') }}" alt="Phòng tắm">
                                     <div class="homely-stat-value" data-counter="{{ $property->bathrooms ?? '5' }}"
@@ -130,15 +57,132 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-large-1-4 uk-width-medium-1-2" data-reveal="up">
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
                                 <div class="homely-stat">
-                                    <img src="{{ asset('frontend/resources/img/homely/svg/car.svg') }}" alt="Gara">
-                                    <div class="homely-stat-value" data-counter="{{ $property->parking ?? '5' }}"
+                                    <img src="{{ asset('frontend/resources/img/homely/svg/car.svg') }}" alt="Chỗ đậu xe">
+                                    <div class="homely-stat-value" data-counter="{{ $property->parking_spots ?? '5' }}"
                                         data-suffix=" Xe">
-                                        {{ $property->parking ?? '5' }} Xe
+                                        {{ $property->parking_spots ?? '5' }} Xe
                                     </div>
                                 </div>
                             </div>
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
+                                <div class="homely-stat">
+                                    <img src="{{ asset('frontend/resources/img/homely/svg/price.svg') }}" alt="Giá">
+                                    <div class="homely-stat-value" data-counter="{{ $property->price ?? '5' }}"
+                                        data-suffix=" {{ $property->price_unit ?? 'VNĐ' }}">
+                                        {{ $property->price ?? '5' }} {{ $property->price_unit ?? 'VNĐ' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-large-1-6 uk-width-medium-1-3" data-reveal="up">
+                                <div class="homely-stat">
+                                    <img src="{{ asset('frontend/resources/img/homely/svg/calendar.svg') }}"
+                                        alt="Năm xây dựng">
+                                    <div class="homely-stat-value" data-counter="{{ $property->year_built ?? '5' }}"
+                                        data-suffix="">
+                                        {{ $property->year_built ?? '5' }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="homely-floorplans">
+            <div class="uk-container uk-container-center">
+                <div class="uk-grid uk-grid-large">
+
+                    <div class="uk-width-large-4-10">
+                        <div class="homely-section-label" data-reveal="fade">Khám phá</div>
+                        <h2 class="homely-section-title" data-reveal="up">Sơ đồ tầng nhà</h2>
+
+                        <ul class="homely-spec-list">
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Giá tiền</span>
+                                <span class="homely-spec-value">
+                                    {{ number_format($property->price ?? 0, 0, ',', '.') }}
+                                    {{ $property->price_unit ?? 'Tỷ' }}
+                                </span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Diện tích</span>
+                                <span class="homely-spec-value">{{ $property->area_sqm ?? '—' }} m²</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Phòng ngủ</span>
+                                <span class="homely-spec-value">{{ $property->bedrooms ?? '—' }}</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Phòng tắm</span>
+                                <span class="homely-spec-value">{{ $property->bathrooms ?? '—' }}</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Chỗ đỗ xe</span>
+                                <span class="homely-spec-value">{{ $property->parking_spots ?? '—' }}</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Số tầng</span>
+                                <span class="homely-spec-value">{{ $property->floors ?? '—' }}</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Năm xây dựng</span>
+                                <span class="homely-spec-value">{{ $property->year_built ?? '—' }}</span>
+                            </li>
+                            <li class="homely-spec-item">
+                                <span class="homely-spec-label">Vị trí</span>
+                                <span class="homely-spec-value">
+                                    {{ $property->district ?? 'Quận 7' }}, {{ $property->city ?? 'TP. HCM' }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="uk-width-large-6-10" data-reveal="right">
+                        <div class="homely-tabs-container">
+                            @if ($floorplans->count() > 0)
+                                <ul class="homely-floor-tabs uk-subnav"
+                                    data-uk-switcher="{connect:'#floorplan-switcher'}">
+                                    @foreach ($floorplans as $index => $floor)
+                                        <li><a
+                                                href="#">{{ $floor->floor_label ?? 'Tầng ' . ($floor->floor_number ?? $index + 1) }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <ul id="floorplan-switcher" class="uk-switcher">
+                                    @foreach ($floorplans as $floor)
+                                        <li>
+                                            <div class="floor-image-container">
+                                                <img src="{{ strpos($floor->plan_image, 'http') === 0 ? $floor->plan_image : asset($floor->plan_image ?? 'frontend/resources/img/homely/misc/floorplan.webp') }}"
+                                                    alt="{{ $floor->floor_label }}">
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <ul class="homely-floor-tabs uk-subnav"
+                                    data-uk-switcher="{connect:'#floorplan-switcher'}">
+                                    <li><a href="#">Tầng 1</a></li>
+                                    <li><a href="#">Tầng 2</a></li>
+                                </ul>
+                                <ul id="floorplan-switcher" class="uk-switcher">
+                                    <li>
+                                        <div class="floor-image-container">
+                                            <img src="{{ asset('frontend/resources/img/homely/misc/floorplan.webp') }}"
+                                                alt="Tầng 1">
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="floor-image-container">
+                                            <img src="{{ asset('frontend/resources/img/homely/misc/floorplan.webp') }}"
+                                                alt="Tầng 2">
+                                        </div>
+                                    </li>
+                                </ul>
+                            @endif
                         </div>
                     </div>
 
@@ -213,165 +257,13 @@
         </section>
 
         <section class="homely-video-tour"
-            style="background-image: url('{{ $property->video_thumbnail ?? asset('frontend/resources/img/homely/slider/1.webp') }}');">
+            style="background-image: url('{{ $property->image ?? asset('frontend/resources/img/homely/slider/1.webp') }}');">
             <div class="play-btn-wrapper">
                 <a href="{{ $property->video_tour_url ?? 'https://www.youtube.com' }}" class="play-btn" data-uk-lightbox>
                     <i class="fa fa-play"></i>
                 </a>
             </div>
             <div class="video-watermark">TOUR</div>
-        </section>
-
-        <section class="homely-floorplans">
-            <div class="uk-container uk-container-center">
-                <div class="uk-grid uk-grid-large">
-
-                    <div class="uk-width-large-4-10">
-                        <div class="homely-section-label" data-reveal="fade">Khám phá</div>
-                        <h2 class="homely-section-title" data-reveal="up">Sơ đồ tầng nhà</h2>
-
-                        <ul class="homely-spec-list">
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Giá tiền</span>
-                                <span class="homely-spec-value">
-                                    {{ number_format($property->price ?? 0, 0, ',', '.') }}
-                                    {{ $property->price_unit ?? 'Tỷ' }}
-                                </span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Diện tích</span>
-                                <span class="homely-spec-value">{{ $property->area_sqm ?? '—' }} m²</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Phòng ngủ</span>
-                                <span class="homely-spec-value">{{ $property->bedrooms ?? '—' }}</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Phòng tắm</span>
-                                <span class="homely-spec-value">{{ $property->bathrooms ?? '—' }}</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Chỗ đỗ xe</span>
-                                <span class="homely-spec-value">{{ $property->parking_spots ?? '—' }}</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Số tầng</span>
-                                <span class="homely-spec-value">{{ $property->floors ?? '—' }}</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Năm xây dựng</span>
-                                <span class="homely-spec-value">{{ $property->year_built ?? '—' }}</span>
-                            </li>
-                            <li class="homely-spec-item">
-                                <span class="homely-spec-label">Vị trí</span>
-                                <span class="homely-spec-value">
-                                    {{ $property->district ?? 'Quận 7' }}, {{ $property->city ?? 'TP. HCM' }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {{-- Floorplan images — slide từ phải --}}
-                    <div class="uk-width-large-6-10" data-reveal="right">
-                        <div class="homely-tabs-container">
-                            @if ($floorplans->count() > 0)
-                                <ul class="homely-floor-tabs uk-subnav"
-                                    data-uk-switcher="{connect:'#floorplan-switcher'}">
-                                    @foreach ($floorplans as $index => $floor)
-                                        <li><a
-                                                href="#">{{ $floor->floor_label ?? 'Tầng ' . ($floor->floor_number ?? $index + 1) }}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                                <ul id="floorplan-switcher" class="uk-switcher">
-                                    @foreach ($floorplans as $floor)
-                                        <li>
-                                            <div class="floor-image-container">
-                                                <img src="{{ strpos($floor->plan_image, 'http') === 0 ? $floor->plan_image : asset($floor->plan_image ?? 'frontend/resources/img/homely/misc/floorplan.webp') }}"
-                                                    alt="{{ $floor->floor_label }}">
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <ul class="homely-floor-tabs uk-subnav"
-                                    data-uk-switcher="{connect:'#floorplan-switcher'}">
-                                    <li><a href="#">Tầng 1</a></li>
-                                    <li><a href="#">Tầng 2</a></li>
-                                </ul>
-                                <ul id="floorplan-switcher" class="uk-switcher">
-                                    <li>
-                                        <div class="floor-image-container">
-                                            <img src="{{ asset('frontend/resources/img/homely/misc/floorplan.webp') }}"
-                                                alt="Tầng 1">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="floor-image-container">
-                                            <img src="{{ asset('frontend/resources/img/homely/misc/floorplan.webp') }}"
-                                                alt="Tầng 2">
-                                        </div>
-                                    </li>
-                                </ul>
-                            @endif
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section class="homely-gallery-container">
-            <div class="uk-container uk-container-center">
-                <div class="homely-gallery-header">
-                    <div>
-                        <div class="homely-section-label" data-reveal="fade">
-                            Bộ Sưu Tập
-                        </div>
-                        <h2 class="homely-section-title uk-margin-remove" data-reveal="up">
-                            Được Thiết Kế Cho Cuộc Sống
-                        </h2>
-                    </div>
-                    <div class="homely-gallery-nav" data-reveal="fade">
-                        <button class="nav-btn gallery-prev"><i class="fa fa-chevron-left"></i></button>
-                        <button class="nav-btn gallery-next"><i class="fa fa-chevron-right"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="swiper homely-gallery-swiper">
-                <div class="swiper-wrapper">
-                    @if ($galleries->count() > 0)
-                        @foreach ($galleries as $gallery)
-                            @if (is_array($gallery->album))
-                                @foreach ($gallery->album as $img)
-                                    <div class="swiper-slide" style="width:auto;">
-                                        <div class="homely-gallery-item">
-                                            <img src="{{ $img }}" alt="{{ $gallery->name ?? 'Bộ sưu tập' }}">
-                                            <div class="item-overlay">
-                                                <h4>{{ $gallery->name ?? 'Không gian sống' }}</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @endif
-                        @endforeach
-                    @else
-                        @for ($i = 1; $i <= 5; $i++)
-                            <div class="swiper-slide" style="width:auto;">
-                                <div class="homely-gallery-item">
-                                    <img src="{{ asset('frontend/resources/img/homely/gallery/' . $i . '.webp') }}"
-                                        alt="Gallery {{ $i }}">
-                                    <div class="item-overlay">
-                                        <h4>{{ ['Phòng Khách', 'Phòng Ngủ Chính', 'Phòng Ăn', 'Nhà Bếp', 'Phòng Tắm'][$i - 1] }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        @endfor
-                    @endif
-                </div>
-            </div>
         </section>
 
         <section class="homely-location-highlights">
@@ -576,126 +468,5 @@
                 </div>
             </div>
         </section>
-
-        <section class="homely-schedule-section">
-            <div class="uk-container uk-container-center">
-                <div class="uk-grid uk-flex-middle">
-                    <div class="uk-width-medium-4-10" data-reveal="left">
-                        <div style="padding-right:20px;">
-                            <div class="homely-section-label">
-                                Liên Hệ
-                            </div>
-                            <div class="homely-section-title">
-                                Lên Lịch Tham<br>Quan Nhà
-                            </div>
-                            <span class="homely-section-desc">
-                                Bạn quan tâm đến bất động sản này hoặc sẵn sàng đến xem trực tiếp? Gửi yêu cầu và chúng tôi
-                                sẽ sắp xếp buổi tham quan thuận tiện cho bạn.
-                            </span>
-
-                            @if (isset($primaryAgent) && $primaryAgent)
-                                <div class="homely-agent-info uk-flex uk-flex-middle" style="gap:15px;">
-                                    @if ($primaryAgent->avatar)
-                                        <img src="{{ $primaryAgent->avatar }}"
-                                            style="width:70px;height:70px;border-radius:50%;object-fit:cover;"
-                                            alt="{{ $primaryAgent->full_name }}">
-                                    @else
-                                        <div class="homely-avatar-fallback"><i class="fa fa-user"></i></div>
-                                    @endif
-                                    <div style="text-align: left;">
-                                        <div class="agent-label">
-                                            {{ $primaryAgent->full_name }}
-                                        </div>
-                                        <div class="homely-label-green" style="font-size:14px; font-weight:500;">
-                                            {{ $primaryAgent->phone }}
-                                        </div>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="homely-agent-info uk-flex uk-flex-middle" style="gap:15px;">
-                                    <div class="homely-avatar-fallback"><i class="fa fa-user"></i></div>
-                                    <div style="text-align: left;">
-                                        <h5 style="margin:0 0 5px 0; font-weight:600;">Emily Rodriguez</h5>
-                                        <div class="homely-label-green" style="font-size:14px; font-weight:500;">(+1)
-                                            234-5678</div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="uk-width-medium-6-10" data-reveal="right">
-                        <form id="visit-request-form" class="homely-schedule-form" method="post"
-                            style="padding-left:20px;">
-                            @csrf
-                            <input type="hidden" name="property_id" value="{{ $property->id ?? '' }}">
-
-                            <div class="uk-grid" uk-grid style="--uk-grid-gutter:20px; --uk-grid-gutter-vertical:20px;">
-                                <div class="uk-width-1-1 uk-width-medium-1-3 uk-margin-bottom">
-                                    <input type="text" name="full_name" placeholder="Họ và tên" required
-                                        class="homely-input">
-                                </div>
-                                <div class="uk-width-1-1 uk-width-medium-1-3 uk-margin-bottom">
-                                    <input type="email" name="email" placeholder="Email" class="homely-input">
-                                </div>
-                                <div class="uk-width-1-1 uk-width-medium-1-3 uk-margin-bottom">
-                                    <input type="text" name="phone" placeholder="Số điện thoại" required
-                                        class="homely-input">
-                                </div>
-                                <div class="uk-width-1-1 uk-width-medium-1-2 uk-margin-bottom">
-                                    <div class="uk-position-relative">
-                                        <input type="text" name="preferred_date" placeholder="DD-MM-YYYY"
-                                            class="homely-input" style="padding-right:40px;" onfocus="this.type='date'"
-                                            onblur="if(!this.value){this.type='text'}">
-                                    </div>
-                                </div>
-                                <div class="uk-width-1-1 uk-width-medium-1-2">
-                                    <div class="uk-position-relative">
-                                        <select name="time" class="homely-input homely-select"
-                                            style="padding-right:40px;">
-                                            <option value="" disabled selected>10:00</option>
-                                            <option value="10:00">10:00</option>
-                                            <option value="11:00">11:00</option>
-                                            <option value="14:00">14:00</option>
-                                            <option value="15:00">15:00</option>
-                                        </select>
-                                        <i class="fa fa-angle-down uk-position-absolute"
-                                            style="right:15px;top:16px;color:#aebf9e;pointer-events:none;"></i>
-                                    </div>
-                                </div>
-                                <div class="uk-width-1-1">
-                                    <textarea name="message" class="homely-input homely-textarea"
-                                        placeholder="Cho chúng tôi biết ngày mong muốn, thời gian, hoặc bất kỳ câu hỏi nào"></textarea>
-                                </div>
-                                <div class="uk-width-1-1 uk-text-left">
-                                    <button type="submit" class="homely-btn-submit">
-                                        Gửi yêu cầu
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div id="visit-form-success"
-                                style="display:none;margin-top:20px;padding:20px;background:#f4f7f4;border-radius:8px;text-align:center;">
-                                <h4 style="margin-bottom:5px;">Yêu Cầu Tham Quan Đã Được Ghi Nhận!</h4>
-                                <p style="color:#6d7b63;margin-bottom:0;">Cảm ơn bạn đã gửi yêu cầu. Đội ngũ của chúng tôi
-                                    sẽ liên hệ với bạn sớm nhất.</p>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <div class="homely-marquee">
-            <div class="marquee-track">
-                @for ($i = 0; $i < 12; $i++)
-                    <div class="marquee-item">
-                        <span>Tiện nghi sang trọng</span>
-                        <img src="{{ asset('frontend/resources/img/homely/svg/star.svg') }}" alt="">
-                    </div>
-                @endfor
-            </div>
-        </div>
-
-    @endsection
+    </div>
+@endsection

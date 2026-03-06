@@ -7,7 +7,10 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\Payment\VnpayController;
 use App\Http\Controllers\Frontend\Payment\PaypalController;
 use App\Http\Controllers\Frontend\ProductCatalogueController as FeProductCatalogueController;
-use App\Http\Controllers\Frontend\ContactController as FeContactController;
+use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Frontend\AboutController;
+use App\Http\Controllers\Frontend\GalleryController;
+use App\Http\Controllers\Frontend\VisitRequestController;
 use App\Http\Controllers\CrawlerController;
 
 //@@useController@@
@@ -35,7 +38,10 @@ require __DIR__ . '/web/realestate.route.php';
 /* FRONTEND ROUTES  */
 Route::group(['middleware' => ['locale']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home.index');
-    Route::get('lien-he.html', [FeContactController::class, 'index'])->name('contact.index');
+    Route::get('gioi-thieu.html', [AboutController::class, 'index'])->name('about.index');
+    Route::get('thu-vien-anh.html', [GalleryController::class, 'index'])->name('gallery.index');
+    Route::get('lien-he.html', [ContactController::class, 'index'])->name('contact.index');
+    Route::post('ajax/visit-request/store', [VisitRequestController::class, 'store'])->name('visit-request.store');
     Route::get('/thumb', [App\Http\Controllers\ImageResizerController::class, 'resize'])->name('thumb');
 
     Route::get('tim-kiem', [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search');
