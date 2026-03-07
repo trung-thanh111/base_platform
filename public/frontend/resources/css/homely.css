@@ -1546,6 +1546,136 @@
     }
 }
 
+.related-grid {
+    margin-top: 20px;
+}
+
+.related-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #f5f5f5;
+    height: 360px;
+}
+
+.related-card__link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
+.related-card__image {
+    width: 100%;
+    height: 100%;
+}
+
+.related-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+
+.related-card:hover .related-card__image img {
+    transform: scale(1.05);
+}
+
+.related-card__overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 45, 28, 0.88), rgba(0, 45, 28, 0.05));
+    z-index: 2;
+}
+
+.related-card__content {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    z-index: 3;
+}
+
+.related-card__content h3 {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #fff;
+    font-weight: 700;
+}
+
+.related-card__date {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    width: 62px;
+    height: 82px;
+    border-radius: 8px;
+    background: rgba(180, 180, 180, 0.72);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.related-card__date .day {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.related-card__date .month {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.homely-pagination {
+    margin-top: 30px;
+}
+
+.homely-pagination .uk-pagination {
+    display: inline-flex;
+    gap: 8px;
+    padding: 0;
+    list-style: none;
+}
+
+.homely-pagination .uk-pagination>li>a,
+.homely-pagination .uk-pagination>li>span {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #111;
+    font-weight: 600;
+    background: transparent;
+}
+
+.homely-pagination .uk-pagination>li.uk-active>span {
+    background: #d8efb6;
+}
+
+@media (max-width: 959px) {
+    .related-card {
+        height: 320px;
+    }
+}
+
+@media (max-width: 639px) {
+    .related-card {
+        height: 280px;
+        border-radius: 12px;
+    }
+}
+
 
 .bg-white {
     background-color: #fff;

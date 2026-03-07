@@ -14,6 +14,8 @@ use App\Enums\SlideEnum;
 use Jenssegers\Agent\Facades\Agent;
 use App\Models\Introduce;
 use App\Models\Post;
+use App\Repositories\Post\PostRepository;
+use App\View\Components\TableOfContents;
 
 class PostCatalogueController extends FrontendController
 {
@@ -24,6 +26,7 @@ class PostCatalogueController extends FrontendController
     protected $postService;
     protected $widgetService;
     protected $slideService;
+    protected $postRepository;
 
     public function __construct(
         PostCatalogueRepository $postCatalogueRepository,
@@ -31,12 +34,14 @@ class PostCatalogueController extends FrontendController
         PostService $postService,
         WidgetService $widgetService,
         SlideService $slideService,
+        PostRepository $postRepository
     ) {
         $this->postCatalogueRepository = $postCatalogueRepository;
         $this->postCatalogueService = $postCatalogueService;
         $this->postService = $postService;
         $this->widgetService = $widgetService;
         $this->slideService = $slideService;
+        $this->postRepository = $postRepository;
         parent::__construct();
     }
 
@@ -53,7 +58,7 @@ class PostCatalogueController extends FrontendController
             [],
             ['order', 'desc']
         );
-        
+
         $breadcrumb = $this->postCatalogueRepository->breadcrumb($postCatalogue, $this->language);
         $posts = $this->postService->paginate(
             $request,
@@ -64,8 +69,6 @@ class PostCatalogueController extends FrontendController
             ['posts.recommend', 'desc']
         );
 
-        // dd($posts->toArray());
-
         $featuredPost = $this->postCatalogueRepository->getFeaturedPost($postCatalogue);
 
         $widgets = $this->widgetService->getWidget([
@@ -75,16 +78,15 @@ class PostCatalogueController extends FrontendController
             ['keyword' => 'about-us-2'],
         ], $this->language);
 
-        $slides = $this->slideService->getSlide(
-            [SlideEnum::MAIN],
-            $this->language
-        );
-        $lastestNews = Post::with(['languages'])->orderBy('order', 'desc')->orderBy('id', 'desc')->where(['publish' => 2])->limit(8)->get();
-        // dd($lastestNews);
+        $slides = $this->slideService->getSlide([
+            SlideEnum::MAIN
+        ], $this->language);
 
-        if($postCatalogue->canonical === 've-chung-toi'){
+        $lastestNews = Post::with(['languages'])->orderBy('order', 'desc')->orderBy('id', 'desc')->where(['publish' => 2])->limit(8)->get();
+
+        if ($postCatalogue->canonical === 've-chung-toi') {
             $template = 'frontend.post.catalogue.intro';
-        }else{
+        } else {
             $template = 'frontend.post.catalogue.index';
         }
 
@@ -93,6 +95,7 @@ class PostCatalogueController extends FrontendController
         $seo = seo($postCatalogue, $page);
         $introduce = convert_array(Introduce::where('language_id', $this->language)->get(), 'keyword', 'content');
         $schema = $this->schema($postCatalogue, $posts, $breadcrumb);
+
         return view($template, compact(
             'config',
             'seo',
@@ -108,9 +111,86 @@ class PostCatalogueController extends FrontendController
         ));
     }
 
+    public function detail($id, $request)
+    {
+        $language = $this->language;
+        $post = $this->postRepository->getPostById($id, $this->language, config('apps.general.defaultPublish'));
+        if (is_null($post)) {
+            abort(404);
+        }
+
+        // increment viewed
+        $viewed = $post->viewed;
+        Post::where('id', $id)->update(['viewed' => $viewed + 1]);
+
+        $postCatalogue = $this->postCatalogueRepository->getPostCatalogueById($post->post_catalogue_id, $this->language);
+        $breadcrumb = $this->postCatalogueRepository->breadcrumb($postCatalogue, $this->language);
+
+        $asidePost = $this->postService->paginate(
+            $request,
+            $this->language,
+            $postCatalogue,
+            1,
+            ['path' => $postCatalogue->canonical],
+        );
+
+        $widgets = $this->widgetService->getWidget([
+            ['keyword' => 'featured-products'],
+            ['keyword' => 'product-category', 'children' => true],
+            ['keyword' => 'product-category-highlight', 'object' => true],
+            ['keyword' => 'about-us-2'],
+        ], $this->language);
+
+        $config = $this->config();
+        $system = $this->system;
+        $seo = seo($post);
+
+        $lastestNews = Post::with(['languages'])->orderBy('order', 'desc')->orderBy('id', 'desc')->where(['publish' => 2])->limit(8)->get();
+
+        $schema = $this->schema($postCatalogue, collect([$post]), $breadcrumb);
+
+        $content = $post->languages->first()->pivot->content;
+        $items = TableOfContents::extract($content);
+        $contentWithToc = TableOfContents::injectIds($content, $items);
+
+        $wordCount = str_word_count(strip_tags($content));
+        $readingTime = max(1, (int) ceil($wordCount / 200));
+
+        $previous = Post::where('post_catalogue_id', $post->post_catalogue_id)
+            ->where('publish', config('apps.general.defaultPublish'))
+            ->where('id', '<', $post->id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $next = Post::where('post_catalogue_id', $post->post_catalogue_id)
+            ->where('publish', config('apps.general.defaultPublish'))
+            ->where('id', '>', $post->id)
+            ->orderBy('id', 'asc')
+            ->first();
+
+        $template = 'frontend.post.post.index';
+
+        return view($template, compact(
+            'config',
+            'seo',
+            'system',
+            'breadcrumb',
+            'postCatalogue',
+            'post',
+            'asidePost',
+            'widgets',
+            'schema',
+            'contentWithToc',
+            'lastestNews',
+            'readingTime',
+            'previous',
+            'next',
+            'items'
+        ));
+    }
+
     private function schema($postCatalogue, $posts, $breadcrumb)
     {
-
         $cat_name = $postCatalogue->languages->first()->pivot->name;
 
         $cat_canonical = write_url($postCatalogue->languages->first()->pivot->canonical);
@@ -190,9 +270,6 @@ class PostCatalogueController extends FrontendController
         return $schema;
     }
 
-   
-
-
     private function config()
     {
         return [
@@ -209,5 +286,4 @@ class PostCatalogueController extends FrontendController
             ]
         ];
     }
-
 }

@@ -12,6 +12,8 @@ use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\GalleryController;
 use App\Http\Controllers\Frontend\VisitRequestController;
 use App\Http\Controllers\CrawlerController;
+use App\Http\Controllers\Frontend\postController;
+use App\Http\Controllers\Frontend\PostCatalogueController;
 
 //@@useController@@
 
@@ -41,38 +43,19 @@ Route::group(['middleware' => ['locale']], function () {
     Route::get('gioi-thieu.html', [AboutController::class, 'index'])->name('about.index');
     Route::get('thu-vien-anh.html', [GalleryController::class, 'index'])->name('gallery.index');
     Route::get('lien-he.html', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('tin-tuc.html', [postController::class, 'index'])->name('post.index');
+    Route::get('tin-tuc/{id}.html', [PostCatalogueController::class, 'detail'])->name('post.catalogue.detail')->where('id', '[0-9]+');
     Route::post('ajax/visit-request/store', [VisitRequestController::class, 'store'])->name('visit-request.store');
     Route::get('/thumb', [App\Http\Controllers\ImageResizerController::class, 'resize'])->name('thumb');
 
     Route::get('tim-kiem', [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search');
     Route::get('tim-kiem/trang-{page}', [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search')->where('page', '[0-9]+');
-    Route::get('yeu-thich' . config('apps.general.suffix'), [FeProductCatalogueController::class, 'wishlist'])->name('product.wishlist.index');
-    Route::get('so-sanh' . config('apps.general.suffix'), [FeProductCatalogueController::class, 'compare'])->name('product.compare.index');
 
-    Route::get('crawler', [CrawlerController::class, 'crawl'])->name('crawl.index');
+    // Catch-all router: resolve canonical slugs from DB via RouterController
+    Route::get('{canonical}/trang-{page}', [RouterController::class, 'page'])
+        ->where(['page' => '[0-9]+'])
+        ->name('router.page');
 
-    /** CART */
-
-    Route::group(['middleware' => ['customer_auth']], function () {
-        Route::get('gio-hang' . config('apps.general.suffix'), [CartController::class, 'checkout'])->name('cart.checkout');
-        Route::get('thanh-toan' . config('apps.general.suffix'), [CartController::class, 'pay'])->name('cart.pay');
-        Route::post('cart/create', [CartController::class, 'store'])->name('cart.store');
-        Route::post('cart/createPay', [CartController::class, 'storePay'])->name('cart.storePay');
-        Route::get('cart/success' . config('apps.general.suffix'), [CartController::class, 'success'])->name('cart.success');
-    });
-
-
-    /* PORT PAYMENT */
-    Route::get('return/vnpay' . config('apps.general.suffix'), [VnpayController::class, 'vnpay_return'])->name('vnpay.momo_return');
-    Route::get('return/vnpay_ipn' . config('apps.general.suffix'), [VnpayController::class, 'vnpay_ipn'])->name('vnpay.vnpay_ipn');
-
-
-    Route::get('paypal/success' . config('apps.general.suffix'), [PaypalController::class, 'success'])->name('paypal.success');
-    Route::get('paypal/cancel' . config('apps.general.suffix'), [PaypalController::class, 'cancel'])->name('paypal.cancel');
-
-    /** DYNAMIC ROUTE */
-    Route::get('{canonical}' . config('apps.general.suffix'), [RouterController::class, 'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
-    Route::get('{canonical}/trang-{page}' . config('apps.general.suffix'), [RouterController::class, 'page'])->name('router.page')->where('canonical', '[a-zA-Z0-9-]+')->where('page', '[0-9]+');
-
-    /*Schools*/
+    Route::get('{canonical}', [RouterController::class, 'index'])
+        ->name('router.index');
 });

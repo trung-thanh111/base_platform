@@ -84,17 +84,6 @@ return [
             ]
         ],
         [
-            'title' => 'QL slide',
-            'icon' => 'fa fa-image',
-            'name' => ['slide'],
-            'subModule' => [
-                [
-                    'title' => 'Cài đặt slide',
-                    'route' => 'slide/index'
-                ],
-            ]
-        ],
-        [
             'title' => 'QL Menu',
             'icon' => 'fa fa-bars',
             'name' => ['menu'],
