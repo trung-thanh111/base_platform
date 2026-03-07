@@ -30,93 +30,42 @@ class postController extends FrontendController
         PostService $postService,
         PostRepository $postRepository,
         WidgetService $widgetService,
-    ){
+    ) {
         $this->postCatalogueRepository = $postCatalogueRepository;
         $this->postCatalogueService = $postCatalogueService;
         $this->postService = $postService;
         $this->postRepository = $postRepository;
         $this->widgetService = $widgetService;
-        parent::__construct(); 
+        parent::__construct();
     }
 
 
-    public function index($id, $request){
-        $language = $this->language;
-        $post = $this->postRepository->getPostById($id, $this->language, config('apps.general.defaultPublish'));
-        $viewed = $post->viewed;
-        $updateViewed = Post::where('id', $id)->update(['viewed' => $viewed + 1]); 
-        if(is_null($post)){
-            abort(404);
-        }
-        $postCatalogue = $this->postCatalogueRepository->getPostCatalogueById($post->post_catalogue_id, $this->language);
-        if($postCatalogue->id == 22 || $postCatalogue->id == 24 || $postCatalogue->id === 44){
-            $postCatalogue->children = $this->postCatalogueRepository->findByCondition(
-                [
-                    ['publish' , '=', 2],
-                    ['parent_id', '=', 21]
-                ],
-                true,
-                [],
-                ['order', 'desc']
-            );
-        }
+    public function index(Request $request, $page = 1)
+    {
+        $posts = $this->postService->paginate($request, $this->language, null, $page, ['path' => 'tin-tuc.html']);
 
-        // dd(123);
-
-        $breadcrumb = $this->postCatalogueRepository->breadcrumb($postCatalogue, $this->language);
-
-        $asidePost = $this->postService->paginate(
-            $request, 
-            $this->language, 
-            $postCatalogue, 
-            1,
-            ['path' => $postCatalogue->canonical],
-        );
-
-
-        $widgets = $this->widgetService->getWidget([
-            ['keyword' => 'featured-products'],
-            ['keyword' => 'product-category', 'children' => true],
-            ['keyword' => 'product-category-highlight', 'object' => true],
-            ['keyword' => 'about-us-2'],
-        ], $this->language);
-
-        /* ------------------- */
-        
         $config = $this->config();
         $system = $this->system;
-        $seo = seo($post);
-        
+        $seo = [
+            'meta_title' => 'Tin tức',
+            'meta_description' => '',
+            'canonical' => url('tin-tuc.html'),
+            'meta_image' => ''
+        ];
+
         $lastestNews = Post::with(['languages'])->orderBy('order', 'desc')->orderBy('id', 'desc')->where(['publish' => 2])->limit(8)->get();
 
-
-        $template = 'frontend.post.post.index';
-
-        $schema = $this->schema($post, $postCatalogue, $breadcrumb);
-        $content = $post->languages->first()->pivot->content;
-        // dd($content);
-        // dd($content, $cont);
-        $items = TableOfContents::extract($content);
-        $contentWithToc = null;
-        $contentWithToc = TableOfContents::injectIds($content, $items);
-        // dd($contentWithToc);
-
-        return view($template, compact(
+        return view('frontend.post.catalogue.index', compact(
             'config',
             'seo',
             'system',
-            'breadcrumb',
-            'postCatalogue',
-            'post',
-            'asidePost',
-            'widgets',
-            'schema',
-            'contentWithToc',
+            'posts',
             'lastestNews'
         ));
     }
 
-    private function schema($post, $postCatalogue, $breadcrumb){
+    private function schema($post, $postCatalogue, $breadcrumb)
+    {
 
         $image = $post->image;
 
@@ -157,7 +106,7 @@ class postController extends FrontendController
                             \"@type\": \"ListItem\",
                             \"position\": 1,
                             \"name\": \" Trang chủ  \",
-                            \"item\": \" ". config('app.url') . " \"
+                            \"item\": \" " . config('app.url') . " \"
                         },
                         $itemBreadcrumbElements
                     ]
@@ -205,10 +154,10 @@ class postController extends FrontendController
             </script>
         ";
         return $schema;
+    }
 
-    } 
-
-    private function config(){
+    private function config()
+    {
         return [
             'language' => $this->language,
             'js' => [
@@ -223,5 +172,4 @@ class postController extends FrontendController
             ]
         ];
     }
-
 }
