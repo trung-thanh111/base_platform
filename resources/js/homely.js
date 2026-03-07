@@ -149,4 +149,16 @@
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-uk-lightbox]').forEach(function (link) {
+            var href = link.getAttribute('href');
+            if (!href) return;
+            var idMatch = href.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
+            if (idMatch) {
+                link.setAttribute('href', 'https://www.youtube.com/embed/' + idMatch[1]);
+                link.setAttribute('data-lightbox-type', 'iframe');
+            }
+        });
+    });
+
 })();
