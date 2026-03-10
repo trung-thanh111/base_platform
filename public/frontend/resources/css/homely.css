@@ -350,6 +350,10 @@
     display: inline-block;
 }
 
+.homely-section-label.is-visible {
+    color: #0d1e18 !important;
+}
+
 .homely-section-label-white {
     font-size: 14px;
     font-weight: 600;
