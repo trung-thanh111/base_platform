@@ -106,7 +106,7 @@ return [
     ],
     'galleryCatalogue' => [
         'index' => [
-            'title' => 'Quản lý hình ảnh',
+            'title' => 'Quản lý nhóm hình ảnh',
             'table' => 'Danh sách nhóm hình ảnh'
         ],
         'create' => [
@@ -117,6 +117,21 @@ return [
         ],
         'delete' => [
             'title' => 'Xóa nhóm hình ảnh'
+        ],
+    ],
+    'gallery' => [
+        'index' => [
+            'title' => 'Quản lý hình ảnh',
+            'table' => 'Danh sách hình ảnh'
+        ],
+        'create' => [
+            'title' => 'Thêm mới hình ảnh'
+        ],
+        'edit' => [
+            'title' => 'Cập nhật hình ảnh'
+        ],
+        'delete' => [
+            'title' => 'Xóa hình ảnh'
         ],
     ],
     'productCatalogue' => [

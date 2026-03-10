@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
-use App\Models\Property;
-use App\Models\Agent;
+use App\Services\V2\Impl\RealEstate\PropertyService;
+use App\Services\V2\Impl\RealEstate\AgentService;
 use Illuminate\Http\Request;
 
 class ContactController extends FrontendController
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected PropertyService $propertyService,
+        protected AgentService $agentService
+    ) {
         parent::__construct();
     }
 
@@ -19,8 +21,8 @@ class ContactController extends FrontendController
      */
     public function index()
     {
-        $property = Property::where('publish', 2)->first();
-        $agents = Agent::where('publish', 2)->get();
+        $property = $this->propertyService->findByCondition([['publish', '=', 2]], false);
+        $agents = $this->agentService->findByCondition([['publish', '=', 2]], true);
 
         $system = $this->system;
         $seo = $this->buildSeo('Liên Hệ — Homely Vietnam');

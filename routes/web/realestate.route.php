@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\V2\RealEstate\GalleryController;
 use App\Http\Controllers\Backend\V2\RealEstate\LocationHighlightController;
 use App\Http\Controllers\Backend\V2\RealEstate\AgentController;
 use App\Http\Controllers\Backend\V2\RealEstate\VisitRequestController;
+use App\Http\Controllers\Backend\V2\RealEstate\GalleryCatalogueController;
 
 Route::group(['middleware' => ['admin', 'locale', 'backend_default_locale'], 'as' => ''], function () {
     // Property
@@ -55,6 +56,15 @@ Route::group(['middleware' => ['admin', 'locale', 'backend_default_locale'], 'as
     Route::post('gallery/{id}/update', [GalleryController::class, 'update'])->where(['id' => '[0-9]+'])->name('gallery.update');
     Route::get('gallery/{id}/delete', [GalleryController::class, 'delete'])->where(['id' => '[0-9]+'])->name('gallery.delete');
     Route::delete('gallery/{id}/destroy', [GalleryController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('gallery.destroy');
+
+    // GalleryCatalogue
+    Route::get('gallery_catalogue/index', [GalleryCatalogueController::class, 'index'])->name('gallery_catalogue.index');
+    Route::get('gallery_catalogue/create', [GalleryCatalogueController::class, 'create'])->name('gallery_catalogue.create');
+    Route::post('gallery_catalogue/store', [GalleryCatalogueController::class, 'store'])->name('gallery_catalogue.store');
+    Route::get('gallery_catalogue/{id}/edit', [GalleryCatalogueController::class, 'edit'])->where(['id' => '[0-9]+'])->name('gallery_catalogue.edit');
+    Route::post('gallery_catalogue/{id}/update', [GalleryCatalogueController::class, 'update'])->where(['id' => '[0-9]+'])->name('gallery_catalogue.update');
+    Route::get('gallery_catalogue/{id}/delete', [GalleryCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('gallery_catalogue.delete');
+    Route::delete('gallery_catalogue/{id}/destroy', [GalleryCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('gallery_catalogue.destroy');
 
     // LocationHighlight
     Route::get('location_highlight/index', [LocationHighlightController::class, 'index'])->name('location_highlight.index');

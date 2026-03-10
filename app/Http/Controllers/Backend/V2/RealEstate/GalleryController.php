@@ -7,20 +7,27 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RealEstate\Gallery\StoreRequest;
 use App\Http\Requests\RealEstate\Gallery\UpdateRequest;
 use App\Services\V2\Impl\RealEstate\GalleryService;
+use App\Services\V2\Impl\RealEstate\PropertyService;
+use App\Services\V2\Impl\RealEstate\GalleryCatalogueService;
 use App\Models\Language;
-use App\Models\Property;
 
 class GalleryController extends Controller
 {
 
     private $service;
+    private $propertyService;
+    private $galleryCatalogueService;
 
     protected $language;
 
     public function __construct(
-        GalleryService $service
+        GalleryService $service,
+        PropertyService $propertyService,
+        GalleryCatalogueService $galleryCatalogueService
     ) {
         $this->service = $service;
+        $this->propertyService = $propertyService;
+        $this->galleryCatalogueService = $galleryCatalogueService;
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
             $language = Language::where('canonical', $locale)->first();
@@ -32,7 +39,7 @@ class GalleryController extends Controller
     public function index(Request $request)
     {
         $this->authorize('modules', 'gallery.index');
-        $records = $this->service->pagination($request);
+        $galleries = $this->service->pagination($request);
         $config = [
             ...$this->config(),
             'extendJs' => true
@@ -41,7 +48,7 @@ class GalleryController extends Controller
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'records'
+            'galleries'
         ));
     }
 
@@ -53,19 +60,21 @@ class GalleryController extends Controller
             'method' => 'create',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
+        $galleryCatalogues = $this->galleryCatalogueService->all();
         $template = 'backend.gallery.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'properties'
+            'properties',
+            'galleryCatalogues'
         ));
     }
 
     public function edit($id)
     {
         $this->authorize('modules', 'gallery.update');
-        if (!$record = $this->service->findById($id)) {
+        if (!$gallery = $this->service->findById($id)) {
             return redirect()->route('gallery.index')->with('error', 'Bản ghi không tồn tại');
         }
         $config = [
@@ -73,36 +82,49 @@ class GalleryController extends Controller
             'method' => 'update',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
+        $galleryCatalogues = $this->galleryCatalogueService->all();
         $template = 'backend.gallery.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'record',
-            'properties'
+            'gallery',
+            'properties',
+            'galleryCatalogues'
         ));
     }
 
     public function store(StoreRequest $request)
     {
         $this->authorize('modules', 'gallery.create');
-        $response = $this->service->save($request, 'store');
-        return $this->handleActionResponse($response, $request, redirectRoute: 'gallery.index');
+        if ($gallery = $this->service->save($request, 'store')) {
+            if ($request->input('send') == 'send_and_stay') {
+                return redirect()->back()->with('success', 'Thêm mới bản ghi thành công');
+            }
+            return redirect()->route('gallery.index')->with('success', 'Thêm mới bản ghi thành công');
+        }
+        return redirect()->back()->with('error', 'Thêm mới bản ghi không thành công. Hãy thử lại');
     }
 
 
     public function update($id, UpdateRequest $request)
     {
         $this->authorize('modules', 'gallery.update');
-        $response = $this->service->save($request, 'update', $id);
-        return $this->handleActionResponse($response, $request, redirectRoute: 'gallery.index');
+        if ($this->service->save($request, 'update', $id)) {
+            if ($request->input('send') == 'send_and_stay') {
+                return redirect()->back()->with('success', 'Cập nhật bản ghi thành công');
+            }
+            return redirect()->route('gallery.index')->with('success', 'Cập nhật bản ghi thành công');
+        }
+        return redirect()->back()->with('error', 'Cập nhật bản ghi không thành công. Hãy thử lại');
     }
 
     public function delete($id)
     {
         $this->authorize('modules', 'gallery.destroy');
-        $record = $this->service->findById($id);
-        $this->checkExists($record);
+        if (!$gallery = $this->service->findById($id)) {
+            return redirect()->route('gallery.index')->with('error', 'Bản ghi không tồn tại');
+        }
         $config = [
             ...$this->config(),
             'method' => 'update'
@@ -111,7 +133,7 @@ class GalleryController extends Controller
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
-            'record'
+            'gallery'
         ));
     }
 

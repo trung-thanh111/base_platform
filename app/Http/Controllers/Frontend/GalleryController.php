@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
-use App\Models\Floorplan;
-use App\Models\Gallery;
-use App\Models\Property;
+use App\Services\V2\Impl\RealEstate\FloorplanService;
+use App\Services\V2\Impl\RealEstate\GalleryService;
+use App\Services\V2\Impl\RealEstate\PropertyService;
+use App\Services\V2\Impl\RealEstate\GalleryCatalogueService;
 use Illuminate\Http\Request;
 
 class GalleryController extends FrontendController
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected GalleryService $galleryService,
+        protected FloorplanService $floorplanService,
+        protected PropertyService $propertyService,
+        protected GalleryCatalogueService $galleryCatalogueService
+    ) {
         parent::__construct();
     }
 
@@ -20,14 +25,10 @@ class GalleryController extends FrontendController
      */
     public function index()
     {
-        $galleries = Gallery::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $floorplans = Floorplan::with('rooms')
-            ->where('publish', 2)
-            ->orderBy('floor_number')
-            ->get();
-        $property = Property::where('publish', 2)->first();
+        $galleries = $this->galleryService->findByCondition([['publish', '=', 2]], true, ['gallery_catalogues'], ['id', 'desc']);
+        $galleryCatalogues = $this->galleryCatalogueService->findByCondition([['publish', '=', 2]], true, ['galleries'], ['order', 'asc']);
+        $floorplans = $this->floorplanService->findByCondition([['publish', '=', 2]], true, ['rooms'], ['floor_number', 'asc']);
+        $property = $this->propertyService->findByCondition([['publish', '=', 2]], false);
 
         $system = $this->system;
         $seo = $this->buildSeo('Thư Viện Ảnh — Homely Vietnam');
@@ -40,6 +41,7 @@ class GalleryController extends FrontendController
             'system',
             'schema',
             'galleries',
+            'galleryCatalogues',
             'floorplans',
             'property'
         ));

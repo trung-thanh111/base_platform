@@ -7,20 +7,23 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RealEstate\Floorplan\StoreRequest;
 use App\Http\Requests\RealEstate\Floorplan\UpdateRequest;
 use App\Services\V2\Impl\RealEstate\FloorplanService;
+use App\Services\V2\Impl\RealEstate\PropertyService;
 use App\Models\Language;
-use App\Models\Property;
 
 class FloorplanController extends Controller
 {
 
     private $service;
+    private $propertyService;
 
     protected $language;
 
     public function __construct(
-        FloorplanService $service
+        FloorplanService $service,
+        PropertyService $propertyService
     ) {
         $this->service = $service;
+        $this->propertyService = $propertyService;
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
             $language = Language::where('canonical', $locale)->first();
@@ -53,7 +56,7 @@ class FloorplanController extends Controller
             'method' => 'create',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
         $template = 'backend.floorplan.store';
         return view('backend.dashboard.layout', compact(
             'template',
@@ -73,7 +76,7 @@ class FloorplanController extends Controller
             'method' => 'update',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
         $template = 'backend.floorplan.store';
         return view('backend.dashboard.layout', compact(
             'template',

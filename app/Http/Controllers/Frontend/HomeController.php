@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
-use App\Models\Property;
-use App\Models\PropertyFacility;
-use App\Models\Floorplan;
-use App\Models\Gallery;
-use App\Models\LocationHighlight;
-use App\Models\Agent;
-use App\Models\Slide;
-use App\Models\VisitRequest;
+use App\Services\V2\Impl\RealEstate\PropertyService;
+use App\Services\V2\Impl\RealEstate\PropertyFacilityService;
+use App\Services\V2\Impl\RealEstate\FloorplanService;
+use App\Services\V2\Impl\RealEstate\GalleryService;
+use App\Services\V2\Impl\RealEstate\LocationHighlightService;
+use App\Services\V2\Impl\RealEstate\AgentService;
+use App\Services\V1\Core\SlideService;
 use App\Repositories\Core\SystemRepository;
 use Illuminate\Http\Request;
 
@@ -20,6 +19,13 @@ class HomeController extends FrontendController
 
     public function __construct(
         SystemRepository $systemRepository,
+        protected PropertyService $propertyService,
+        protected PropertyFacilityService $facilityService,
+        protected FloorplanService $floorplanService,
+        protected GalleryService $galleryService,
+        protected LocationHighlightService $locationHighlightService,
+        protected AgentService $agentService,
+        protected SlideService $slideService
     ) {
         $this->systemRepository = $systemRepository;
         parent::__construct();
@@ -30,27 +36,16 @@ class HomeController extends FrontendController
      */
     public function index()
     {
-        $property = Property::where('publish', 2)->first();
-        $facilities = PropertyFacility::where('publish', 2)
-            ->orderBy('sort_order')
-            ->get();
-        $floorplans = Floorplan::with('rooms')
-            ->where('publish', 2)
-            ->orderBy('floor_number')
-            ->get();
-        $galleries = Gallery::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $locationHighlights = LocationHighlight::where('publish', 2)
-            ->orderBy('sort_order')
-            ->get();
-        $primaryAgent = Agent::where('is_primary', true)
-            ->where('publish', 2)
-            ->first();
-        $agents = Agent::where('publish', 2)->get();
-        $slides = Slide::where('keyword', 'main-slider')
-            ->where('publish', 2)
-            ->first();
+        $property = $this->propertyService->findByCondition([['publish', '=', 2]], false);
+        $facilities = $this->facilityService->findByCondition([['publish', '=', 2]], true, [], ['sort_order', 'asc']);
+        $floorplans = $this->floorplanService->findByCondition([['publish', '=', 2]], true, ['rooms'], ['floor_number', 'asc']);
+        $galleries = $this->galleryService->findByCondition([['publish', '=', 2]], true, [], ['id', 'desc']);
+        $locationHighlights = $this->locationHighlightService->findByCondition([['publish', '=', 2]], true, [], ['sort_order', 'asc']);
+
+        $primaryAgent = $this->agentService->findByCondition([['is_primary', '=', true], ['publish', '=', 2]], false);
+        $agents = $this->agentService->findByCondition([['publish', '=', 2]], true);
+
+        $slides = $this->slideService->findByCondition([['keyword', '=', 'main-slider'], ['publish', '=', 2]], false);
 
         $system = $this->system;
         $seo = $this->buildSeo();

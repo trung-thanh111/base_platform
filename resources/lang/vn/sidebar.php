@@ -38,11 +38,15 @@ return [
         [
             'title' => 'Thư viện ảnh',
             'icon' => 'fa fa-picture-o',
-            'name' => ['gallery'],
+            'name' => ['gallery', 'gallery_catalogue'],
             'subModule' => [
                 [
                     'title' => 'Danh sách',
                     'route' => 'gallery/index'
+                ],
+                [
+                    'title' => 'Nhóm Thư viện',
+                    'route' => 'gallery_catalogue/index'
                 ],
             ]
         ],

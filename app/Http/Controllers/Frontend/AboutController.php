@@ -3,18 +3,24 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\FrontendController;
-use App\Models\Property;
-use App\Models\PropertyFacility;
-use App\Models\Floorplan;
-use App\Models\Agent;
-use App\Models\Gallery;
-use App\Models\LocationHighlight;
+use App\Services\V2\Impl\RealEstate\PropertyService;
+use App\Services\V2\Impl\RealEstate\PropertyFacilityService;
+use App\Services\V2\Impl\RealEstate\FloorplanService;
+use App\Services\V2\Impl\RealEstate\AgentService;
+use App\Services\V2\Impl\RealEstate\GalleryService;
+use App\Services\V2\Impl\RealEstate\LocationHighlightService;
 use Illuminate\Http\Request;
 
 class AboutController extends FrontendController
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected PropertyService $propertyService,
+        protected PropertyFacilityService $facilityService,
+        protected FloorplanService $floorplanService,
+        protected AgentService $agentService,
+        protected GalleryService $galleryService,
+        protected LocationHighlightService $locationHighlightService
+    ) {
         parent::__construct();
     }
 
@@ -23,24 +29,13 @@ class AboutController extends FrontendController
      */
     public function index()
     {
-        $property = Property::where('publish', 2)->first();
-        $agents = Agent::where('publish', 2)->get();
-        $facilities = PropertyFacility::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $floorplans = Floorplan::with('rooms')
-            ->where('publish', 2)
-            ->orderBy('floor_number')
-            ->get();
-        $locationHighlights = LocationHighlight::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $galleries = Gallery::where('publish', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-        $primaryAgent = Agent::where('is_primary', true)
-            ->where('publish', 2)
-            ->first();
+        $property = $this->propertyService->findByCondition([['publish', '=', 2]], false);
+        $agents = $this->agentService->findByCondition([['publish', '=', 2]], true);
+        $facilities = $this->facilityService->findByCondition([['publish', '=', 2]], true, [], ['id', 'desc']);
+        $floorplans = $this->floorplanService->findByCondition([['publish', '=', 2]], true, ['rooms'], ['floor_number', 'asc']);
+        $locationHighlights = $this->locationHighlightService->findByCondition([['publish', '=', 2]], true, [], ['id', 'desc']);
+        $galleries = $this->galleryService->findByCondition([['publish', '=', 2]], true, [], ['id', 'desc']);
+        $primaryAgent = $this->agentService->findByCondition([['is_primary', '=', true], ['publish', '=', 2]], false);
 
         $system = $this->system;
         $seo = $this->buildSeo('Về Chúng Tôi — Homely Vietnam');

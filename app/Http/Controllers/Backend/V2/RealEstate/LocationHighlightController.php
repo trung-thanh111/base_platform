@@ -7,20 +7,23 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RealEstate\LocationHighlight\StoreRequest;
 use App\Http\Requests\RealEstate\LocationHighlight\UpdateRequest;
 use App\Services\V2\Impl\RealEstate\LocationHighlightService;
+use App\Services\V2\Impl\RealEstate\PropertyService;
 use App\Models\Language;
-use App\Models\Property;
 
 class LocationHighlightController extends Controller
 {
 
     private $service;
+    private $propertyService;
 
     protected $language;
 
     public function __construct(
-        LocationHighlightService $service
+        LocationHighlightService $service,
+        PropertyService $propertyService
     ) {
         $this->service = $service;
+        $this->propertyService = $propertyService;
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
             $language = Language::where('canonical', $locale)->first();
@@ -53,7 +56,7 @@ class LocationHighlightController extends Controller
             'method' => 'create',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
         $template = 'backend.location_highlight.store';
         return view('backend.dashboard.layout', compact(
             'template',
@@ -73,7 +76,7 @@ class LocationHighlightController extends Controller
             'method' => 'update',
             'extendJs' => true
         ];
-        $properties = Property::all();
+        $properties = $this->propertyService->all();
         $template = 'backend.location_highlight.store';
         return view('backend.dashboard.layout', compact(
             'template',

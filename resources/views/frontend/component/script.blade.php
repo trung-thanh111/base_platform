@@ -7,6 +7,14 @@
 
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <script src="{{ asset('frontend/resources/plugins/wow/dist/wow.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof Fancybox !== 'undefined') {
+            Fancybox.bind('[data-fancybox]', {});
+        }
+    });
+</script>
 <script src="{{ asset('frontend/resources/function.js') }}"></script>
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous"

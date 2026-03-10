@@ -23,6 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'property_id' => 'required|exists:properties,id',
+            'gallery_catalogue_id' => 'nullable|exists:gallery_catalogues,id',
             'album' => 'required|array',
         ];
     }
@@ -32,6 +33,7 @@ class StoreRequest extends FormRequest
         return [
             'property_id.required' => 'Bạn chưa chọn bất động sản.',
             'property_id.exists' => 'Bất động sản không hợp lệ.',
+            'gallery_catalogue_id.exists' => 'Loại thư viện không hợp lệ.',
             'album.required' => 'Bạn chưa chọn ảnh nào cho bộ sưu tập.',
             'album.array' => 'Dữ liệu ảnh không hợp lệ.',
         ];

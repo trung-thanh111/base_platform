@@ -435,11 +435,12 @@ if (!function_exists('frontend_recursive_menu')) {
             if ($type == 'html') {
                 foreach ($data as $key => $val) {
                     $name = $val['item']->languages->first()->pivot->name;
-                    $canonical = write_url($val['item']->languages->first()->pivot->canonical, true, true);
+                    $rawCanonical = $val['item']->languages->first()->pivot->canonical ?? '';
+                    $canonical = (strpos($rawCanonical, 'http') !== false) ? $rawCanonical : '/' . ltrim(write_url($rawCanonical, false, true), '/');
                     $ulClass = ($count >= 1) ? 'menu-level__' . ($count + 1) : '';
                     $html .= '<li class="' . (($count != 0 && count($val['children'])) ? 'children' : '') . '">';
-                    $html .= '<a href="' . (($name == 'Trang chủ') ? '.' : $canonical) . '" title="' . $name . '" data-menu-id="' . $val['item']->id . '">' .
-                        (($name == 'Home') ? '' : '') . $name . '</a>';
+                    $html .= '<a href="' . (($name == 'Trang chủ') ? '/' : $canonical) . '" title="' . $name . '" data-menu-id="' . $val['item']->id . '">' .
+                        $name . '</a>';
                     if (count($val['children'])) {
                         $html .= '<div class="dropdown-menu">';
                         $html .= '<ul class="uk-list uk-clearfix menu-style ' . $ulClass . '">';
