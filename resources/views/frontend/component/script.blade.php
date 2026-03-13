@@ -11,7 +11,25 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof Fancybox !== 'undefined') {
-            Fancybox.bind('[data-fancybox]', {});
+            Fancybox.bind("[data-fancybox]", {});
+        }
+
+        const backToTop = document.getElementById('hp-back-to-top');
+        if (backToTop) {
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('active');
+                } else {
+                    backToTop.classList.remove('active');
+                }
+            });
+
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
         }
     });
 </script>

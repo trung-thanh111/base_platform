@@ -91,10 +91,7 @@
         </div>
     </div>
 </footer>
-
-<a href="#" id="back-to-top" class="homely-back-to-top" title="Lên đầu trang">
-    <i class="fa fa-chevron-up"></i>
-</a>
+@include('frontend.component.floating-social')
 
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous"
